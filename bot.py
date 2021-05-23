@@ -1,3 +1,4 @@
+import logging 
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 from telegram.ext import Updater, CommandHandler, CallbackContext, CallbackQueryHandler
 from dotenv import load_dotenv
@@ -5,10 +6,10 @@ import os
 
 load_dotenv()
 
-import logging 
-logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-                     level=logging.INFO)
-
+logging.basicConfig(
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO
+)
+logger = logging.getLogger(__name__)
 
 def start(update: Update, _: CallbackContext) -> None:
     # context.bot.send_message(chat_id=update.effective_chat.id, text="I'm a bot, please talk to me!")
@@ -23,10 +24,8 @@ def start(update: Update, _: CallbackContext) -> None:
 
 def run_bot() -> None:
     bot_token = os.getenv('bot_token')
-    updater = Updater(token=bot_token, use_context=True)
-    dispatcher = updater.dispatcher
-    start_handler = CommandHandler('start', start)
-    dispatcher.add_handler(start_handler)
+    updater = Updater(token=bot_token)
+    updater.dispatcher.add_handler(CommandHandler('start', start))
 
     updater.start_polling()
     updater.idle()
