@@ -14,7 +14,7 @@ def start(update, context) -> None:
     context.bot.send_message(chat_id=update.effective_chat.id, text='فایل یا فایل هاتو واسم بفرست ...')
 
 
-def file_handler(update, context):
+def file_handler(update, context) -> None:
     file_id = update.message.document.file_id
     newFile = context.bot.get_file(file_id)
     if newFile:
@@ -28,7 +28,7 @@ def run_bot() -> None:
     bot_token = os.getenv('bot_token')
     updater = Updater(token=bot_token, use_context=True)
     updater.dispatcher.add_handler(CommandHandler('start', start))
-    updater.dispatcher.add_handler(MessageHandler(Filters.document | Filters.photo, 'file_handler'))
+    updater.dispatcher.add_handler(MessageHandler(Filters.document | Filters.photo, file_handler))
     updater.start_polling()
     updater.idle()
 
