@@ -14,9 +14,11 @@ logger = logging.getLogger(__name__)
 def start(update: Update, _: CallbackContext) -> None:
     # context.bot.send_message(chat_id=update.effective_chat.id, text="I'm a bot, please talk to me!")
     keyboard = [
-        InlineKeyboardButton('راه اندازی مجدد', callback_data='1'),
-        InlineKeyboardButton('ویرایش قبلی', callback_data='2'),
-        InlineKeyboardButton('بریم بعدی', callback_data='3'),
+        [
+            InlineKeyboardButton('راه اندازی مجدد', callback_data='1'),
+            InlineKeyboardButton('ویرایش قبلی', callback_data='2'),
+        ],
+        [InlineKeyboardButton('بریم بعدی', callback_data='3')]
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
     update.message.reply_text('چیکار کنیم رفیق ؟ ', reply_markup=reply_markup)
