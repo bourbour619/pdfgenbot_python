@@ -20,7 +20,7 @@ def file_handler(update, context) -> None:
     fileDict = update.message.document or update.message.photo[-1]
     newFile = context.bot.get_file(fileDict.file_id)
     if newFile:
-        file_dir = os.path.join(os.path(__file__),'files')
+        file_dir = os.path.join(os.path.dirname(__file__),'files')
         newFile.download(os.path.join(file_dir, fileDict.file_name))
         context.bot.send_message(chat_id=update.effective_chat.id, text='.فایلتو گرفتم')
     else:
