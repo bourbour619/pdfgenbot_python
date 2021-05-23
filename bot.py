@@ -17,12 +17,11 @@ def start(update, context) -> None:
 
 
 def file_handler(update, context) -> None:
-    print(update.message.document or update.message.photo)
-    file_id = update.message.document.file_id or update.message.photo.file_id
-    newFile = context.bot.get_file(file_id)
+    fileDict = update.message.document or update.message.photo[-1]
+    newFile = context.bot.get_file(fileDict.file_id)
     if newFile:
-        print(newFile)
-        newFile.download()
+        file_dir = os.path.join(os.path(__file__),'files')
+        newFile.download(os.path.join(file_dir, fileDict.file_name))
         context.bot.send_message(chat_id=update.effective_chat.id, text='.فایلتو گرفتم')
     else:
         context.bot.send_message(chat_id=update.effective_chat.id, text='فایلت نیومده که ....!')
