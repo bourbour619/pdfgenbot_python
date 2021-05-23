@@ -3,6 +3,8 @@ from telegram.ext import Updater, CommandHandler, Filters, MessageHandler
 from dotenv import load_dotenv
 import os 
 
+from PIL import Image
+
 load_dotenv()
 
 logging.basicConfig(
@@ -15,20 +17,26 @@ def start(update, context) -> None:
 
 
 def file_handler(update, context) -> None:
-    file_id = update.message.document.file_id
+    print(update.message.document or update.message.photo)
+    file_id = update.message.document.file_id or update.message.photo.file_id
     newFile = context.bot.get_file(file_id)
     if newFile:
+        print(newFile)
         newFile.download()
         context.bot.send_message(chat_id=update.effective_chat.id, text='.فایلتو گرفتم')
     else:
         context.bot.send_message(chat_id=update.effective_chat.id, text='فایلت نیومده که ....!')
         
 
+#def convert_pdf():
+
+
 def run_bot() -> None:
     bot_token = os.getenv('bot_token')
     updater = Updater(token=bot_token, use_context=True)
     updater.dispatcher.add_handler(CommandHandler('start', start))
     updater.dispatcher.add_handler(MessageHandler(Filters.document | Filters.photo, file_handler))
+#    updater.dispatcher.add_handler(CommandHandler('convert_pdf', convert_pdf))
     updater.start_polling()
     updater.idle()
 
