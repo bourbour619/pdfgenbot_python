@@ -40,18 +40,32 @@ def file_handler(update, context) -> None:
     context.bot.send_message(chat_id=update.effective_chat.id, text='فایلهایی که تا الان واسم فرستادی ایناس  ...')
     all_files = activity.log()
     strcv = '\n'.join(all_files)
-    context.bot.send_message(chat_id=update.effective_chat.id, text=strcv)
+    context.bot.send_message(chat_id=update.effective_chat.id, text=f'تعداد فایلها: {len(strcv)} \n{strcv} \n اگه فایل ها اوکیه بریم که pdf اشو بسازیم ...' )
+    context.bot.send_message(chat_id=update.effective_chat.id, text='واسه شروع تبدیل /convert_pdf رو بزن و واسه شروع از اول /start')
+
+def convert_pdf(update, context) -> None:
+    all_files = activity.log()
+    exts = [f.split('.')[1] for f in all_files]
+    e = all_files[0].split('.')[1]
+    if any( ext != e for ext in exts ):
+        context.bot.send_message(chat_id=update.effective_chat.id, text='فرمت فایلهات یکی نیست و نمیشه ازینا pdf درست کرد یه بار دیگه امتحان کن از /start')
+    else:
+        if e != 'jpeg':
+            context.bot.send_message(chat_id=update.effective_chat.id, text='فعلا فقط میتونی عکس رو به pdf تبدیل کنی باقی فرمت ها بعدا ایشالله :)')
+        else:
+            imgs = []
+            for f in range(len(all_files)):
+                imgs[f] = Image.open(all_files[f])
+                imgs[f] = imgs[f].convert('RGB')
+
         
-
-#def convert_pdf():
-
 
 def run_bot() -> None:
     bot_token = os.getenv('bot_token')
     updater = Updater(token=bot_token, use_context=True)
     updater.dispatcher.add_handler(CommandHandler('start', start))
     updater.dispatcher.add_handler(MessageHandler(Filters.document | Filters.photo, file_handler))
-#    updater.dispatcher.add_handler(CommandHandler('convert_pdf', convert_pdf))
+    updater.dispatcher.add_handler(CommandHandler('convert_pdf', convert_pdf))
     updater.start_polling()
     updater.idle()
 
