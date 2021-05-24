@@ -26,7 +26,12 @@ def file_handler(update, context) -> None:
     fileDict = update.message.document or update.message.photo[-1]
     newFile = context.bot.get_file(fileDict.file_id)
     if newFile:
-        name = fileDict['file_name'] if 'file_name' in fileDict else fileDict['file_id']
+        print('file_name' in fileDict) 
+        name = ''
+        if 'file_name' in fileDict:
+            name = fileDict['file_name']
+        else:
+            name = fileDict['file_id']
         file_dir = activity.add(name=name)
         newFile.download(file_dir)
         context.bot.send_message(chat_id=update.effective_chat.id, text='فایلتو گرفتم .')
