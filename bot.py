@@ -28,7 +28,7 @@ def file_handler(update, context) -> None:
     fileDict = update.message.document or update.message.photo[-1]
     newFile = context.bot.get_file(fileDict['file_id'])
     if newFile:
-        name = uuid4().split('-')[0] + '.jpeg'
+        name = str(uuid4()).split('-')[0] + '.jpeg'
         if update.message.document:
             name = fileDict['file_name']
         file_dir = activity.add(name=name)
