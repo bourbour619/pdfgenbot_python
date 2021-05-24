@@ -2,13 +2,13 @@ import logging
 from telegram.ext import Updater, CommandHandler, Filters, MessageHandler
 from dotenv import load_dotenv
 import os 
-import Activity
+from . import Activity
 
 from PIL import Image
 
 load_dotenv()
 
-activity = {}
+activity = Activity()
 
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO
@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 
 def start(update, context) -> None:
     context.bot.send_message(chat_id=update.effective_chat.id, text='فایل یا فایل هاتو واسم بفرست ...')
-    activity = Activity(id=update.effective_user.username)
+    activity.init(id=update.effective_user.username)
     
 
 def file_handler(update, context) -> None:

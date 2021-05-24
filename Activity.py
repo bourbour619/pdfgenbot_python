@@ -3,9 +3,13 @@ import os
 from os import path
 
 class Activity :
-    def __init__(self, id) -> None:
+
+    def __init__(self) -> None:
+        pass
+
+    def init(self, id):
         self.id = id
-        self.root = path.join(path.join(path.dirname(__file__), 'files'), self.id)
+        self.root = path.join(path.join(path.dirname(__file__),'files'), self.id)
         if self.first() :
             self.env()
 
