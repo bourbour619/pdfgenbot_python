@@ -24,11 +24,17 @@ def file_handler(update, context) -> None:
     fileDict = update.message.document or update.message.photo[-1]
     newFile = context.bot.get_file(fileDict.file_id)
     if newFile:
-        file_dir = activity.add(name=fileDict.file_name or fileDict.file_id)
+        name = fileDict['file_name'] if fileDict['file_name'] else fileDict['file_id']
+        file_dir = activity.add(name=name)
         newFile.download(file_dir)
         context.bot.send_message(chat_id=update.effective_chat.id, text='فایلتو گرفتم .')
     else:
         context.bot.send_message(chat_id=update.effective_chat.id, text='فایلت نیومده که ....!')
+
+    context.bot.send_message(chat_id=update.effective_chat.id, text='فایلهایی که تا الان واسم فرستادی ایناس  ...')
+    all_files = activity.log()
+    strcv = '\n'.join(all_files)
+    context.bot.send_message(chat_id=update.effective_chat.id, text=strcv)
         
 
 #def convert_pdf():
