@@ -2,7 +2,7 @@ import logging
 from telegram.ext import Updater, CommandHandler, Filters, MessageHandler
 from dotenv import load_dotenv
 import os 
-from . import Activity
+from modules import Activity
 
 from PIL import Image
 
