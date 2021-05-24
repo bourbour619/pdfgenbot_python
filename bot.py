@@ -40,12 +40,13 @@ def file_handler(update, context) -> None:
     context.bot.send_message(chat_id=update.effective_chat.id, text='فایلهایی که تا الان واسم فرستادی ایناس  ...')
     all_files = activity.log()
     strcv = '\n'.join(all_files)
-    context.bot.send_message(chat_id=update.effective_chat.id, text=f'تعداد فایلها: {len(strcv)} \n{strcv} \n اگه فایل ها اوکیه بریم که pdf اشو بسازیم ...' )
+    context.bot.send_message(chat_id=update.effective_chat.id, text=f'تعداد فایلها: {len(all_files)} \n{strcv} \n اگه فایل ها اوکیه بریم که pdf اشو بسازیم ...' )
     context.bot.send_message(chat_id=update.effective_chat.id, text='واسه شروع تبدیل /convert_pdf رو بزن و واسه شروع از اول /start')
 
 def convert_pdf(update, context) -> None:
     all_files = activity.log()
     exts = [f.split('.')[1] for f in all_files]
+    print(exts)
     e = all_files[0].split('.')[1]
     if any( ext != e for ext in exts ):
         context.bot.send_message(chat_id=update.effective_chat.id, text='فرمت فایلهات یکی نیست و نمیشه ازینا pdf درست کرد یه بار دیگه امتحان کن از /start')
