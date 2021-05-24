@@ -2,7 +2,8 @@ import os
 from os import path
 
 class Activity :
-
+    id = ''
+    root = ''
     def __init__(self) -> None:
         pass
 
