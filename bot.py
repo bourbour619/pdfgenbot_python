@@ -68,6 +68,7 @@ def convert_pdf(update, context) -> None:
             pdf_file = filter(lambda f: f.split('.')[1] == 'pdf', activity.log())[0]
             context.bot.send_message(chat_id=update.effective_chat.id, text=f'فایل pdf ات آماده شد بفرما ... \n {pdf_file}')
             context.bot.send_document(chat_id=update.effective_chat.id, document=open(os.path.join(activity.root, pdf_file), 'rb'))
+            activity.flush()
         
 
 def run_bot() -> None:

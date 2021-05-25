@@ -24,3 +24,6 @@ class Activity :
 
     def add(self, name) -> str:
         return path.join(self.root, name)
+    
+    def flush(self) -> None:
+        os.rmdir(self.root)
