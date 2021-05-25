@@ -44,6 +44,8 @@ def file_handler(update, context) -> None:
     context.bot.send_message(chat_id=update.effective_chat.id, text='واسه شروع تبدیل /convert_pdf رو بزن و واسه شروع از اول /start')
 
 def convert_pdf(update, context) -> None:
+    if not activity.root:
+        activity.init(id=update.effective_user.username)
     all_files = activity.log()
     exts = [f.split('.')[1] for f in all_files]
     print(exts)
