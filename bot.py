@@ -52,9 +52,13 @@ def convert_pdf(update, context) -> None:
     e = all_files[0].split('.')[1]
     if any( ext != e for ext in exts ):
         context.bot.send_message(chat_id=update.effective_chat.id, text='فرمت فایلهات یکی نیست و نمیشه ازینا pdf درست کرد یه بار دیگه امتحان کن از /start')
+        for f in all_files:
+            activity.remove(f)
     else:
         if e != 'jpeg':
             context.bot.send_message(chat_id=update.effective_chat.id, text='فعلا فقط میتونی عکس رو به pdf تبدیل کنی باقی فرمت ها بعدا ایشالله :)')
+            for f in all_files:
+                activity.remove(f)
         else:
             imgs = []
             all_dirs = [os.path.join(activity.root, f) for f in all_files]

@@ -25,6 +25,11 @@ class Activity :
     def add(self, name) -> str:
         return path.join(self.root, name)
     
+    def remove(self, name) -> None:
+        current = path.join(self.root, name)
+        if path.isfile(current):
+            os.remove(current)
+
     def flush(self) -> None:
         os.system(f'rm -rf {self.root}')
         self.id = ''
