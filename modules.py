@@ -26,4 +26,4 @@ class Activity :
         return path.join(self.root, name)
     
     def flush(self) -> None:
-        os.rmdir(self.root)
+        os.system(f'rm -rf {self.root}')
