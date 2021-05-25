@@ -56,9 +56,13 @@ def convert_pdf(update, context) -> None:
         else:
             imgs = []
             for f in range(len(all_files)):
-                imgs[f] = Image.open(all_files[f])
+                imgs[f] = Image.open(f'{all_files[f]}')
                 imgs[f] = imgs[f].convert('RGB')
-
+            name = str(uuid4()).split('-')[0] + '.pdf'
+            pdf_dir = activity.add(name=name)
+            imgs[0].save(f'{pdf_dir}', save_all=True, append_images=imgs)
+            pdf_file = activity.log()[-1]
+            context.bot.send_message(chat_id=update.effective_chat.id, text=f'فایل pdf ات آماده شد بفرما ... \n {pdf_file}')
         
 
 def run_bot() -> None:
