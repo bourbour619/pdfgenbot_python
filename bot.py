@@ -58,7 +58,7 @@ def convert_pdf(update, context) -> None:
         else:
             imgs = []
             all_dirs = [os.path.join(activity.root, f) for f in all_files]
-            for d in range(len(all_dirs)):
+            for d in range(len(all_dirs) - 1):
                 imgs[d] = Image.open(f'{all_dirs[d]}')
                 imgs[d] = imgs[d].convert('RGB')
             name = str(uuid4()).split('-')[0] + '.pdf'
