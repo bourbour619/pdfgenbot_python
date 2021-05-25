@@ -27,3 +27,5 @@ class Activity :
     
     def flush(self) -> None:
         os.system(f'rm -rf {self.root}')
+        self.id = ''
+        self.root = ''
