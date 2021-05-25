@@ -57,9 +57,10 @@ def convert_pdf(update, context) -> None:
             context.bot.send_message(chat_id=update.effective_chat.id, text='فعلا فقط میتونی عکس رو به pdf تبدیل کنی باقی فرمت ها بعدا ایشالله :)')
         else:
             imgs = []
-            for f in range(len(all_files)):
-                imgs[f] = Image.open(f'{all_files[f]}')
-                imgs[f] = imgs[f].convert('RGB')
+            all_dirs = [os.path.join(activity.root, f) for f in all_files]
+            for d in range(len(all_dirs)):
+                imgs[d] = Image.open(f'{all_dirs[d]}')
+                imgs[d] = imgs[d].convert('RGB')
             name = str(uuid4()).split('-')[0] + '.pdf'
             pdf_dir = activity.add(name=name)
             imgs[0].save(f'{pdf_dir}', save_all=True, append_images=imgs)
