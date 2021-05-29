@@ -35,7 +35,8 @@ def start(msg):
         KeyboardButton('تبدیل از PDF'),
         KeyboardButton('تبدیل به PDF')
     ]
-    markup.add(btns)
+    for btn in btns:
+        markup.add(btn)
     bot.send_message(cid, 'چیکار میخوای کنی ؟ :(', reply_markup=markup )
     activity.init(id=user)
 
