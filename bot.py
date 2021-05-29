@@ -32,7 +32,7 @@ def start(msg):
     bot.send_message(cid, 'فایل یا فایل هاتو واسم بفرست ...' )
     activity.init(id=user)
 
-@bot.message_handler(func = lambda msg: msg.document.mime_type in activity.accepted, content_types=['document', 'photo'])
+@bot.message_handler(func = lambda msg: msg.document.mime_type.split('/')[1] in activity.accepted, content_types=['document', 'photo'])
 def correct_file_handler(msg):
     user = msg.chat.username
     cid = msg.chat.id
@@ -59,7 +59,7 @@ def correct_file_handler(msg):
             bot.send_message(cid, 'فایلتو گرفتم، چیکار کنم حالا ؟ ', reply_markup=markup)
 
 
-@bot.message_handler(func = lambda msg: msg.document.mime_type  not in activity.accepted, content_types=['document'])
+@bot.message_handler(func = lambda msg: msg.document.mime_type.split('/')[1]  not in activity.accepted, content_types=['document'])
 def wrong_file_handler(msg):
     ext = msg.document.mime_type
     bot.reply_to(msg, f'فرمت فایلی که فرستادی یعنی {ext} به کار من نمیاد')
