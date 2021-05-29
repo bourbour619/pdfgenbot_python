@@ -35,7 +35,8 @@ def start(msg):
         KeyboardButton('تبدیل از PDF'),
         KeyboardButton('تبدیل به PDF')
     ]
-    bot.send_message(cid, 'فایل یا فایل هاتو واسم بفرست ...' )
+    markup.add(btns)
+    bot.send_message(cid, 'چیکار میخوای کنی ؟ :(', reply_markup=markup )
     activity.init(id=user)
 
 @bot.message_handler(func = lambda msg: msg.document.mime_type.split('/')[1] in activity.accepted, content_types=['document', 'photo'])
