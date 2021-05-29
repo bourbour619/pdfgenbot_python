@@ -4,7 +4,9 @@ from os import path
 class Activity :
     id = ''
     root = ''
+    accepted = ['pdf', 'doc', 'docx', 'jpeg', 'jpg', 'png']
     def __init__(self) -> None:
+
         pass
 
     def init(self, id):
