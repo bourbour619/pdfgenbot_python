@@ -1,5 +1,6 @@
 import logging
 import telebot
+from telebot.apihelper import _make_request
 from telebot.types import ReplyKeyboardMarkup, KeyboardButton
 from dotenv import load_dotenv
 import os 
@@ -29,6 +30,11 @@ bot = telebot.TeleBot(token=bot_token, parse_mode=None)
 def start(msg):
     cid = msg.chat.id
     user = msg.chat.username
+    markup = ReplyKeyboardMarkup(row_width=2)
+    btns = [
+        KeyboardButton('تبدیل از PDF'),
+        KeyboardButton('تبدیل به PDF')
+    ]
     bot.send_message(cid, 'فایل یا فایل هاتو واسم بفرست ...' )
     activity.init(id=user)
 
