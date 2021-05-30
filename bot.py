@@ -31,12 +31,12 @@ def start(msg):
     user = msg.chat.username
     markup = ReplyKeyboardMarkup(row_width=2)
     markup.row(
-        KeyboardButton('* به pdf'),
-        KeyboardButton('pdf به *'),
+        KeyboardButton('تبدیل به pdf'),
+        KeyboardButton('تبدیل از pdf'),
     )
     markup.row(
-        KeyboardButton('یکی کردن pdf'),
-        KeyboardButton('لیست فایلها')
+        KeyboardButton('لیست فایلها'),
+        KeyboardButton('یکی کردن pdf')
     )
     bot.send_message(cid, 'چیکار میخوای کنی ؟ :(', reply_markup=markup )
     activity.init(id=user)
@@ -137,15 +137,26 @@ def file_handler(msg):
 
 def delfile(cid):
     activity.remove()
-    bot.send_message(cid, 'فایلت حذف شد ')
+    bot.send_message(cid, 'فایلت حذف شد')
 
 
+def cvtopdf(cid):
+    bot.send_message(cid, 'در دست ساخت !')
+
+def cvfrompdf(cid):
+    bot.send_message(cid, 'در دست ساخت !')
+
+callback_funcs = {
+    'delfile': delfile,
+    'cvtopdf': cvtopdf,
+    'cvfrompdf': cvfrompdf
+}
 
 
 @bot.callback_query_handler(func=lambda call: True)
 def callback_inline(call):
     if call.data:
-        func = call.data
+        func = callback_funcs.get(call.data)
         cid = call.message.chat.id
         return func(cid)
 
