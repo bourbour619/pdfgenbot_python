@@ -4,7 +4,8 @@ from os import path
 class Activity :
     id = ''
     root = ''
-    accepted = ['pdf', 'doc', 'docx', 'jpeg', 'jpg', 'png']
+    known = ['pdf', 'doc', 'docx', 'jpeg', 'jpg', 'png']
+    type = ''
     current = ''
     def __init__(self) -> None:
 
@@ -28,10 +29,13 @@ class Activity :
     def add(self, name) -> str:
         return path.join(self.root, name)
     
-    def remove(self, name) -> None:
-        current = path.join(self.root, name)
-        if path.isfile(current):
-            os.remove(current)
+    def remove(self, name=None) -> None:
+        target = path.join(self.root, self.current)
+        if name:
+            target = path.join(self.root, name)
+        if path.isfile(target):
+                os.remove(target)
+            
 
     def flush(self) -> None:
         os.system(f'rm -rf {self.root}')
