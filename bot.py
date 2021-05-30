@@ -75,7 +75,7 @@ def file_handler(msg):
             bot.send_chat_action(cid, 'typing')
             time.sleep(2)
             if resp.ok:
-                with open(save, 'w') as f:
+                with open(save, 'wb') as f:
                     f.write(resp.content)
                 markup = InlineKeyboardMarkup(row_width=2)
                 btns = [
