@@ -5,6 +5,7 @@ class Activity :
     id = ''
     root = ''
     accepted = ['pdf', 'doc', 'docx', 'jpeg', 'jpg', 'png']
+    current = ''
     def __init__(self) -> None:
 
         pass
@@ -36,3 +37,5 @@ class Activity :
         os.system(f'rm -rf {self.root}')
         self.id = ''
         self.root = ''
+
+
