@@ -56,14 +56,14 @@ def correct_file_handler(msg):
     cid = msg.chat.id
     if not any(activity.current):
         bot.send_message(cid, 'لطفا برای استفاده از بات از /start شروع نمایید')
-    file_dict = msg.document or msg.photo[-1]
-    file_info = bot.get_file(file_dict['file_id'])
+    fileObj = msg.document or msg.photo[-1]
+    file_info = bot.get_file(fileObj.file_id)
     if file_info:
         name = str(uuid4()).split('-')[0] + '.jpeg'
         ext = 'jpeg'
         if msg.document:
-            name = file_dict['file_name']
-            ext = file_dict['mime_type'].split('/')[1]
+            name = fileObj.file_name
+            ext = fileObj.mime_type.split('/')[1]
         if activity.current == '*topdf' and ext == 'pdf':
             bot.send_message(cid, 'فایلی که فرستادی خودش pdf :)')
         else:
