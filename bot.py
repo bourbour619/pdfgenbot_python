@@ -51,8 +51,9 @@ def to_pdf(msg):
     bot.send_message(cid, 'فایلتو برام بفرست ... ')
 
 
-@bot.message_handler(func = lambda msg: msg.document.mime_type.split('/')[1] in activity.accepted, content_types=['document', 'photo'])
-def correct_file_handler(msg):
+
+@bot.message_handler(content_types=['document', 'photo'])
+def file_handler(msg):
     cid = msg.chat.id
     if not any(activity.current):
         bot.send_message(cid, 'لطفا برای استفاده از بات از /start شروع نمایید')
@@ -63,7 +64,9 @@ def correct_file_handler(msg):
         ext = 'jpeg'
         if msg.document:
             name = fileObj.file_name
-            ext = fileObj.mime_type.split('/')[1]
+            ext = fileObj.file_name.split('.')[1]
+        if ext not in activity.accepted:
+            bot.send_message(cid, 'فایلی که فرستادی به درد من نمیخوره :(')
         if activity.current == '*topdf' and ext == 'pdf':
             bot.send_message(cid, 'فایلی که فرستادی خودش pdf :)')
         else:
@@ -84,14 +87,7 @@ def correct_file_handler(msg):
                 bot.send_message(cid, 'فایلتو گرفتم !', reply_markup=markup)
                 
             
-                
-
-
-
-@bot.message_handler(func = lambda msg: msg.document.mime_type.split('/')[1]  not in activity.accepted, content_types=['document'])
-def wrong_file_handler(msg):
-    ext = msg.document.mime_type
-    bot.reply_to(msg, f'فرمت فایلی که فرستادی یعنی {ext} به کار من نمیاد')
+            
 
 
 bot.polling()
