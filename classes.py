@@ -37,7 +37,7 @@ class Activity :
         return os.listdir(self.root)
 
     def add(self, name) -> str:
-        t = name if len(name.split('/')) > 0 else path.join(self.root, name)
+        t = path.join(self.root, name)
         self.queue.append(t)
         self.current = self.queue[len(self.queue) - 1]
         return t
