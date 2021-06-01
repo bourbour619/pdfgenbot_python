@@ -201,7 +201,7 @@ def cvfrompdf(cid):
         bot.send_message(cid, 'اینجا رو چیکار کنم ؟ :)', reply_markup=markup)
 
 def mergepdf(cid):
-    if len(activity.input) < 2:
+    if len(activity.queue) < 2:
         bot.send_message(cid, 'فایل هات واسه یکی کردن یه دونه بیشتر نی بیکاری :)')
         markup = InlineKeyboardMarkup(row_width=2)
         markup.add(
