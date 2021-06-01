@@ -8,8 +8,6 @@ from classes import Activity
 import requests
 
 
-
-from PIL import Image
 from uuid import uuid4
 
 load_dotenv()
@@ -31,18 +29,18 @@ def start(msg):
     user = msg.chat.username
     markup = ReplyKeyboardMarkup(row_width=2)
     markup.row(
-        KeyboardButton('تبدیل به pdf'),
-        KeyboardButton('تبدیل از pdf'),
+        KeyboardButton('پی دی اف به بقیه'),
+        KeyboardButton('بقیه به پی دی اف'),
     )
     markup.row(
         KeyboardButton('لیست فایلها'),
-        KeyboardButton('یکی کردن pdf')
+        KeyboardButton('یکی کردن پی دی اف ها')
     )
-    bot.send_message(cid, 'چیکار میخوای کنی ؟ :(', reply_markup=markup )
+    bot.send_message(cid, 'چیکار میخوای کنی ؟ :)', reply_markup=markup )
     activity.init(id=user)
 
-@bot.message_handler(func= lambda msg: msg.text == '* به pdf')
-def to_pdf(msg):
+@bot.message_handler(func= lambda msg: msg.text == 'پی دی اف به بقیه')
+def from_pdf(msg):
     user = msg.chat.username
     cid = msg.chat.id
     if not activity.root:
@@ -50,7 +48,7 @@ def to_pdf(msg):
     activity.type = '*topdf'
     bot.send_message(cid, 'فایلتو برام بفرست ... ')
     
-@bot.message_handler(func= lambda msg: msg.text == 'pdf به *')
+@bot.message_handler(func= lambda msg: msg.text == 'بقیه به پی دی اف')
 def to_pdf(msg):
     user = msg.chat.username
     cid = msg.chat.id
@@ -59,8 +57,8 @@ def to_pdf(msg):
     activity.type = 'pdfto*'
     bot.send_message(cid, 'فایلتو برام بفرست ... ')
 
-@bot.message_handler(func= lambda msg: msg.text == 'یکی کردن pdf')
-def to_pdf(msg):
+@bot.message_handler(func= lambda msg: msg.text == 'یکی کردن پی دی اف ها')
+def merge_pdfs(msg):
     user = msg.chat.username
     cid = msg.chat.id
     if not activity.root:
@@ -69,15 +67,28 @@ def to_pdf(msg):
     bot.send_message(cid, 'فایلتو برام بفرست ... ')
 
 @bot.message_handler(func= lambda msg: msg.text == 'لیست فایلها')
-def to_pdf(msg):
+def list_files(msg):
     user = msg.chat.username
     cid = msg.chat.id
     if not activity.root:
         activity.init(id=user)
-    activity.type = 'listofoutputs'
+    activity.type = 'listfiles'
     bot.send_message(cid, 'فایلتو برام بفرست ... ')
 
-
+@bot.message_handler(func= lambda msg: msg.text == 'مرحله قبلی')
+def prev_step(msg):
+    cid = msg.chat.id
+    bot.send_message(cid, 'فایلتو برام بفرست ... ')
+    markup = ReplyKeyboardMarkup(row_width=2)
+    markup.row(
+        KeyboardButton('پی دی اف به بقیه'),
+        KeyboardButton('بقیه به پی دی اف'),
+    )
+    markup.row(
+        KeyboardButton('لیست فایلها'),
+        KeyboardButton('یکی کردن پی دی اف ها')
+    )
+    bot.send_message(cid, 'چیکار میخوای کنی ؟ :)', reply_markup=markup )
 
 
 
@@ -95,7 +106,7 @@ def file_handler(msg):
             name = fileObj.file_name
             ext = fileObj.file_name.split('.')[1]
         if ext not in activity.known:
-            bot.send_message(cid, 'فایلی که فرستادی به درد من نمیخوره :(')
+            bot.send_message(cid, 'فایلی که فرستادی به درد من نمیخوره :)')
         if activity.type == '*topdf':
             if ext == 'pdf':
                 bot.send_message(cid, 'فایلی که فرستادی خودش pdf :)')
@@ -116,7 +127,7 @@ def file_handler(msg):
                     bot.send_message(cid, 'فایلتو گرفتم !', reply_markup=markup)
         if activity.type == 'pdfto*':
             if ext != 'pdf':
-                bot.send_message(cid, 'فایلی که فرستادی pdf نیست :(')
+                bot.send_message(cid, 'فایلی که فرستادی pdf نیست :)')
             else:
                 save = activity.add(name=name)
                 activity.current = name
@@ -141,10 +152,28 @@ def delfile(cid):
 
 
 def cvtopdf(cid):
-    bot.send_message(cid, 'در دست ساخت !')
+    src_exts = ['docx', 'doc', 'jpg']
+    ext = activity.current.split('.')[1]
+    if ext not in src_exts:
+        bot.send_message(cid, f'فرمت {ext} رو فعلا نمی تونم کاری کنم براش واسه همین حذفش کردم :)')
+        activity.remove()
+    else:
+        markup = ReplyKeyboardMarkup(row_width=2)
+        markup.add(
+            KeyboardButton('پی دی اف اش کن'),
+            KeyboardButton('مرحله قبلی')
+        )
+        bot.send_message(cid, 'اینجا رو چیکار کنم ؟ :)', reply_markup=markup)
+
 
 def cvfrompdf(cid):
-    bot.send_message(cid, 'در دست ساخت !')
+        markup = ReplyKeyboardMarkup(row_width=2)
+        markup.add(
+            KeyboardButton('ورد اش کن'),
+            KeyboardButton('عکس اش کن'),
+            KeyboardButton('مرحله قبلی')
+        )
+        bot.send_message(cid, 'اینجا رو چیکار کنم ؟ :)', reply_markup=markup)
 
 callback_funcs = {
     'delfile': delfile,
