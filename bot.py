@@ -120,12 +120,19 @@ def file_handler(msg):
                     with open(save, 'wb') as f:
                         f.write(resp.content)
                     bot.send_chat_action(cid, 'typing')
-                    time.sleep(1)
+                    time.sleep(2)
                     markup = InlineKeyboardMarkup(row_width=2)
-                    markup.row(
-                        InlineKeyboardButton(text='حذف', callback_data='delfile'),
-                        InlineKeyboardButton(text='تبدیل ', callback_data='cvtopdf')
-                    )
+                    if ext == 'jpg' or ext == 'jpeg':
+                        markup.row(
+                                InlineKeyboardButton(text='حذف', callback_data='delfile'),
+                                InlineKeyboardButton(text='اضافه', callback_data='addfile'),
+                                InlineKeyboardButton(text='تبدیل ', callback_data='cvtopdf')
+                        )
+                    else:
+                        markup.row(
+                            InlineKeyboardButton(text='حذف', callback_data='delfile'),
+                            InlineKeyboardButton(text='تبدیل ', callback_data='cvtopdf')
+                        )
                     bot.send_message(cid, 'فایلتو گرفتم !', reply_markup=markup)
         if activity.type == 'pdfto*':
             if ext != 'pdf':
@@ -210,7 +217,7 @@ def mergepdf(cid):
         bot.send_message(cid, 'یه فایل دیگه باید اضافه کنی', reply_markup = markup)
     else:
         merged = merge_pdfs_func(activity.queue)
-        doc = open(merged)
+        doc = open(merged, encoding='utf-8', errors='ignore')
         bot.send_chat_action(cid, 'upload_document')
         time.sleep(2)
         bot.send_document(cid, doc)
