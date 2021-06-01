@@ -75,7 +75,7 @@ def list_files(msg):
     if not activity.root:
         activity.init(id=user)
     log = '\n'.join(activity.log())
-    bot.send_message(cid, f'فایلهایی که واسم فرستادی : {log} \n\t\t تعداد فایلها : {len(activity.log())}')
+    bot.send_message(cid, f'فایلهایی که واسم فرستادی : \n {log} \n\t\t تعداد فایلها : {len(activity.log())}')
     
 
 @bot.message_handler(func= lambda msg: msg.text == 'مرحله قبلی')
@@ -173,7 +173,7 @@ def delfile(cid):
 
 def addfile(cid):
     log = '\n'.join(activity.queue)
-    bot.send_message(cid, f'فعلا اینا رو فرستادی: {log} \n\t\t تعداد فایلها: {len(activity.queue)}')
+    bot.send_message(cid, f'فعلا اینا رو فرستادی : \n {log} \n\t\t تعداد فایلها: {len(activity.queue)}')
     bot.send_message(cid, 'فایل بعدی رو بفرست ...')
 
 def cvtopdf(cid):
@@ -209,7 +209,7 @@ def mergepdf(cid):
         )
         bot.send_message(cid, 'یه فایل دیگه باید اضافه کنی', reply_markup = markup)
     else:
-        merged = merge_pdfs_func(activity.input)
+        merged = merge_pdfs_func(activity.queue)
         doc = open(merged)
         bot.send_chat_action(cid, 'upload_document')
         time.sleep(2)
