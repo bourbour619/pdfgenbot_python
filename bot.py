@@ -162,6 +162,7 @@ def file_handler(msg):
                             InlineKeyboardButton(text='اضافه', callback_data='addfile'),
                             InlineKeyboardButton(text='یکی کردن', callback_data='mergepdf')
                         )
+                        bot.send_message(cid, 'فایلتو گرفتم !', reply_markup=markup)
                     
 
 
