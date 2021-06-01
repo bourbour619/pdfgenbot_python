@@ -173,7 +173,7 @@ def delfile(cid):
 
 def addfile(cid):
     log = '\n'.join(activity.queue)
-    bot.send_message(cid, f'فعلا اینا رو فرستادی: {log} \n\t\t تعداد فایلها: {len(activity.input)}')
+    bot.send_message(cid, f'فعلا اینا رو فرستادی: {log} \n\t\t تعداد فایلها: {len(activity.queue)}')
     bot.send_message(cid, 'فایل بعدی رو بفرست ...')
 
 def cvtopdf(cid):
