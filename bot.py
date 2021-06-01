@@ -25,6 +25,8 @@ bot = telebot.TeleBot(token=bot_token, parse_mode=None)
 
 @bot.message_handler(commands=['start'])
 def start(msg):
+    if activity:
+        activity.flush()
     cid = msg.chat.id
     user = msg.chat.username
     markup = ReplyKeyboardMarkup(row_width=2)
