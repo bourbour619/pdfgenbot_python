@@ -4,7 +4,7 @@ from telebot.types import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardMar
 from dotenv import load_dotenv
 import os 
 import time
-from classes import Activity
+from classes import Activity, merge_pdfs_func
 import requests
 
 
@@ -45,7 +45,7 @@ def from_pdf(msg):
     cid = msg.chat.id
     if not activity.root:
         activity.init(id=user)
-    activity.type = '*topdf'
+    activity.type = 'pdfto*'
     bot.send_message(cid, 'فایلتو برام بفرست ... ')
     
 @bot.message_handler(func= lambda msg: msg.text == 'بقیه به پی دی اف')
@@ -54,7 +54,7 @@ def to_pdf(msg):
     cid = msg.chat.id
     if not activity.root:
         activity.init(id=user)
-    activity.type = 'pdfto*'
+    activity.type = '*topdf'
     bot.send_message(cid, 'فایلتو برام بفرست ... ')
 
 @bot.message_handler(func= lambda msg: msg.text == 'یکی کردن پی دی اف ها')
@@ -64,7 +64,7 @@ def merge_pdfs(msg):
     if not activity.root:
         activity.init(id=user)
     activity.type = 'mergepdfs'
-    bot.send_message(cid, 'فایلتو برام بفرست ... ')
+    bot.send_message(cid, 'فایل هاتو برام بفرست ... ')
 
 @bot.message_handler(func= lambda msg: msg.text == 'لیست فایلها')
 def list_files(msg):
@@ -72,8 +72,9 @@ def list_files(msg):
     cid = msg.chat.id
     if not activity.root:
         activity.init(id=user)
-    activity.type = 'listfiles'
-    bot.send_message(cid, 'فایلتو برام بفرست ... ')
+    log = '\n'.join(activity.log())
+    bot.send_message(cid, f'فایلهایی که واسم فرستادی : {log} \n\t\t تعداد فایلها : {len(activity.log())}')
+    
 
 @bot.message_handler(func= lambda msg: msg.text == 'مرحله قبلی')
 def prev_step(msg):
@@ -112,13 +113,12 @@ def file_handler(msg):
                 bot.send_message(cid, 'فایلی که فرستادی خودش pdf :)')
             else:
                 save = activity.add(name=name)
-                activity.current = save
                 resp = requests.get('https://api.telegram.org/file/bot{0}/{1}'.format(bot_token, file_info.file_path))
-                bot.send_chat_action(cid, 'typing')
-                time.sleep(2)
                 if resp.ok:
                     with open(save, 'wb') as f:
                         f.write(resp.content)
+                    bot.send_chat_action(cid, 'typing')
+                    time.sleep(1)
                     markup = InlineKeyboardMarkup(row_width=2)
                     markup.row(
                         InlineKeyboardButton(text='حذف', callback_data='delfile'),
@@ -130,19 +130,37 @@ def file_handler(msg):
                 bot.send_message(cid, 'فایلی که فرستادی pdf نیست :)')
             else:
                 save = activity.add(name=name)
-                activity.current = name
                 resp = requests.get('https://api.telegram.org/file/bot{0}/{1}'.format(bot_token, file_info.file_path))
-                bot.send_chat_action(cid, 'typing')
-                time.sleep(2)
                 if resp.ok:
                     with open(save, 'wb') as f:
                         f.write(resp.content)
+                    bot.send_chat_action(cid, 'typing')
+                    time.sleep(1)
                     markup = InlineKeyboardMarkup(row_width=2)
                     markup.row(
                         InlineKeyboardButton(text='حذف', callback_data='delfile'),
                         InlineKeyboardButton(text='تبدیل ', callback_data='cvfrompdf')
                     )
                     bot.send_message(cid, 'فایلتو گرفتم !', reply_markup=markup)
+        if activity.type == 'mergepdfs':
+            if ext != 'pdf':
+                bot.send_message(cid, 'فایلی که فرستادی pdf نیست :)')
+            else:
+                save = activity.add(name=name)
+                resp = requests.get('https://api.telegram.org/file/bot{0}/{1}'.format(bot_token, file_info.file_path))
+                time.sleep(2)
+                if resp.ok:
+                    with open(save, 'wb') as f:
+                        f.write(resp.content)
+                        bot.send_chat_action(cid, 'typing')
+                        time.sleep(1)
+                        markup = InlineKeyboardMarkup(row_width=2)
+                        markup.row(
+                            InlineKeyboardButton(text='حذف', callback_data='delfile'),
+                            InlineKeyboardButton(text='اضافه', callback_data='addfile'),
+                            InlineKeyboardButton(text='یکی کردن', callback_data='mergepdf')
+                        )
+                    
 
 
 
@@ -150,6 +168,10 @@ def delfile(cid):
     activity.remove()
     bot.send_message(cid, 'فایلت حذف شد')
 
+def addfile(cid):
+    log = '\n'.join(activity.queue)
+    bot.send_message(cid, f'فعلا اینا رو فرستادی: {log} \n\t\t تعداد فایلها: {len(activity.input)}')
+    bot.send_message(cid, 'فایل بعدی رو بفرست ...')
 
 def cvtopdf(cid):
     src_exts = ['docx', 'doc', 'jpg']
@@ -175,10 +197,27 @@ def cvfrompdf(cid):
         )
         bot.send_message(cid, 'اینجا رو چیکار کنم ؟ :)', reply_markup=markup)
 
+def mergepdf(cid):
+    if len(activity.input) < 2:
+        bot.send_message(cid, 'فایل هات واسه یکی کردن یه دونه بیشتر نی بیکاری :)')
+        markup = InlineKeyboardMarkup(row_width=2)
+        markup.add(
+            InlineKeyboardButton(text='اضافه', callback_data='addfile')
+        )
+        bot.send_message(cid, 'یه فایل دیگه باید اضافه کنی', reply_markup = markup)
+    else:
+        merged = merge_pdfs_func(activity.input)
+        doc = open(merged)
+        bot.send_chat_action(cid, 'upload_document')
+        time.sleep(2)
+        bot.send_document(cid, doc)
+
 callback_funcs = {
     'delfile': delfile,
+    'addfile': addfile,
     'cvtopdf': cvtopdf,
-    'cvfrompdf': cvfrompdf
+    'cvfrompdf': cvfrompdf,
+    'mergepdf': mergepdf
 }
 
 

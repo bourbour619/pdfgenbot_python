@@ -1,20 +1,24 @@
+import glob
 import os
-from os import path
 from abc import ABC, abstractmethod
+from os import path
+from time import sleep
+
 import docx2pdf
-import pdf2docx
-import glob 
 import img2pdf
+import pdf2docx
 import pdf2image
 from PyPDF2 import PdfFileReader, PdfFileWriter
+
+
 class Activity :
     id = ''
     root = ''
     known = ['pdf', 'doc', 'docx', 'jpeg', 'jpg', 'png']
     type = ''
     current = ''
+    queue = []
     def __init__(self) -> None:
-
         pass
 
     def init(self, id):
@@ -33,7 +37,10 @@ class Activity :
         return os.listdir(self.root)
 
     def add(self, name) -> str:
-        return path.join(self.root, name)
+        t = name if len(name.split('/')) > 0 else path.join(self.root, name)
+        self.queue.append(t)
+        self.current = self.queue[len(self.queue) - 1]
+        return t
     
     def remove(self, name=None) -> None:
         target = path.join(self.root, self.current)
