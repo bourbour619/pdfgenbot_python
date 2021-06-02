@@ -29,7 +29,7 @@ class Activity :
         if self.first() :
             self.env()
         else:
-            os.system(f'rm -f {self.root}/*')
+            self.reset(mode='soft')
 
     def first(self) -> bool:
         return not path.isdir(self.root)
@@ -56,11 +56,14 @@ class Activity :
         if path.isfile(target):
                 os.remove(target)
             
-
-    def flush(self) -> None:
-        os.system(f'rm -rf {self.root}')
-        self.id = ''
-        self.root = ''
+    def reset(self, mode) -> None:
+        if mode == 'soft':
+            os.system(f'rm -f {self.root}/*')
+        if mode == 'hard':
+            os.system(f'rm -rf {self.root}')
+            self.id = ''
+            self.root = ''
+        
 
 
 class ConvertStrategy(ABC):

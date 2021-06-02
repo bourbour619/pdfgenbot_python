@@ -48,7 +48,7 @@ def bot_markup_step(step: int):
 @bot.message_handler(commands=['start'])
 def start(msg):
     if activity:
-        activity.flush()
+        activity.reset(mode='hard')
     cid = msg.chat.id
     user = msg.chat.username
     activity.init(id=user)
@@ -57,6 +57,8 @@ def start(msg):
 
 @bot.message_handler(func= lambda msg: msg.text == 'کار جدید')
 def new_job(msg):
+    if activity:
+        activity.reset(mode='soft')
     user = msg.chat.username
     cid = msg.chat.id
     if not activity.root:
