@@ -131,7 +131,7 @@ def make_it_pdf(msg):
         if ext in docExts:
             wtp = WordToPdf()
             converted = wtp.convert(f)
-        doc = open(converted, encoding='utf-8-sig')
+        doc = open(converted, encoding='utf-8')
         bot.send_chat_action(cid, 'upload_document')
         time.sleep(2)
         bot.send_document(cid, doc)
@@ -262,7 +262,7 @@ def mergepdf(cid):
         bot.send_message(cid, 'یه فایل دیگه باید اضافه کنی', reply_markup = markup)
     else:
         merged = merge_pdfs_func(activity.queue)
-        doc = open(merged, encoding='utf-8-sig')
+        doc = open(merged, encoding='utf-8')
         bot.send_chat_action(cid, 'upload_document')
         time.sleep(2)
         bot.send_document(cid, doc)
