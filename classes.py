@@ -85,7 +85,7 @@ class PdfToWord(ConvertStrategy):
 
 class ImageToPdf(ConvertStrategy):
 
-    def convert(self, path, no) -> str:
+    def convert(self, path, no = 1) -> str:
         pdfPath = path.split('.')[0] + '.pdf'
         if no == 1:
             with open(pdfPath, 'wb') as p :

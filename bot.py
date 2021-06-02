@@ -109,7 +109,7 @@ def prev_step(msg):
     cid = msg.chat.id
     markup = bot_markup_step(step=activity.step - 1)
     activity.step -= 1
-    bot.send_message(cid, 'چیکار میخوای کنی ؟ :)', reply_markup=markup )
+    bot.send_message(cid, f'مرحله {activity.step}', reply_markup=markup )
 
 @bot.message_handler(func = lambda msg: msg.text == 'پی دی اف اش کن')
 def make_it_pdf(msg):
