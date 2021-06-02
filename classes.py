@@ -104,8 +104,8 @@ class ImageToPdf(ConvertStrategy):
         return pdfPath
 
 class PdfToImage(ConvertStrategy):
-    
-    def covnert(self, path, no = 1) -> str:
+
+    def convert(self, path, no = 1) -> str:
         imagePath = os.path.dirname(path)
         images = pdf2image.convert_from_path(path)
         for i in range(len(images)):
