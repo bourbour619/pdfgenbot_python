@@ -131,7 +131,7 @@ def make_it_pdf(msg):
         if ext in docExts:
             wtp = WordToPdf()
             converted = wtp.convert(f)
-        doc = open(converted, encoding='utf-8')
+        doc = open(converted, encoding='utf-8', errors='ignore')
         bot.send_chat_action(cid, 'upload_document')
         time.sleep(2)
         bot.send_document(cid, doc)
