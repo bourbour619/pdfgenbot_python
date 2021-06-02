@@ -27,6 +27,8 @@ def bot_markup_step(step: int):
     if step == 1:    
         markup.add(
             KeyboardButton('کار جدید'),
+        )
+        markup.add(
             KeyboardButton('راهنمایی'),
         )
     if step > 1:
@@ -49,10 +51,9 @@ def start(msg):
         activity.flush()
     cid = msg.chat.id
     user = msg.chat.username
-    markup = bot_markup_step(step=1)
-    activity.step += 1
-    bot.send_message(cid, f'سلام {user}', reply_markup=markup )
     activity.init(id=user)
+    markup = bot_markup_step(step=activity.step)
+    bot.send_message(cid, f'سلام {user}', reply_markup=markup )
 
 @bot.message_handler(func= lambda msg: msg.text == 'کار جدید')
 def new_job(msg):
@@ -60,7 +61,7 @@ def new_job(msg):
     cid = msg.chat.id
     if not activity.root:
         activity.init(id=user)
-    markup = bot_markup_step(step=2)
+    markup = bot_markup_step(step=activity.step)
     activity.step += 1
     bot.send_message(cid, 'میخوای چیکار کنی ؟ :)', reply_markup= markup)
 
@@ -106,7 +107,7 @@ def list_files(msg):
 @bot.message_handler(func= lambda msg: msg.text == 'مرحله قبلی')
 def prev_step(msg):
     cid = msg.chat.id
-    markup = bot_markup_step(step=activity.step)
+    markup = bot_markup_step(step=activity.step - 1)
     activity.step -= 1
     bot.send_message(cid, 'چیکار میخوای کنی ؟ :)', reply_markup=markup )
 
@@ -236,6 +237,7 @@ def cvtopdf(cid):
             KeyboardButton('مرحله قبلی')
         )
         bot.send_message(cid, 'اینجا رو چیکار کنم ؟ :)', reply_markup=markup)
+        activity.step += 1
 
 def cvfrompdf(cid):
         markup = ReplyKeyboardMarkup(row_width=2)
@@ -245,6 +247,7 @@ def cvfrompdf(cid):
             KeyboardButton('مرحله قبلی')
         )
         bot.send_message(cid, 'اینجا رو چیکار کنم ؟ :)', reply_markup=markup)
+        activity.step += 1
 
 def mergepdf(cid):
     if len(activity.queue) < 2:
