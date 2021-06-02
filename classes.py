@@ -28,6 +28,8 @@ class Activity :
         self.step = 1
         if self.first() :
             self.env()
+        else:
+            os.system(f'rm -f {self.root}/*')
 
     def first(self) -> bool:
         return not path.isdir(self.root)
