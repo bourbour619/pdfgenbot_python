@@ -6,7 +6,7 @@ from time import sleep
 
 import docx2pdf
 import img2pdf
-import pdf2docx
+#import pdf2docx
 import pdf2image
 from PyPDF2 import PdfFileReader, PdfFileWriter
 

@@ -25,8 +25,8 @@ bot = telebot.TeleBot(token=bot_token, parse_mode=None)
 def bot_markup_step(step: int):
     markup = ReplyKeyboardMarkup(row_width=2)
     if step == 1:    
-        markup.row(
-            KeyboardButton('تبدیل جدید'),
+        markup.add(
+            KeyboardButton('کار جدید'),
             KeyboardButton('راهنمایی'),
         )
     if step > 1:
