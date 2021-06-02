@@ -107,6 +107,8 @@ def list_files(msg):
 @bot.message_handler(func= lambda msg: msg.text == 'مرحله قبلی')
 def prev_step(msg):
     cid = msg.chat.id
+    if activity.step <= 1:
+        activity.step += 2
     markup = bot_markup_step(step=activity.step - 1)
     activity.step -= 1
     bot.send_message(cid, f'مرحله {activity.step}', reply_markup=markup )

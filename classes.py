@@ -90,13 +90,13 @@ class ImageToPdf(ConvertStrategy):
     def convert(self, path, no = 1) -> str:
         pdfPath = path.split('.')[0] + '.pdf'
         if no == 1:
-            with open(pdfPath, 'wb') as p :
+            with open(pdfPath, 'wb', encoding='utf-8') as p :
                 p.write(img2pdf.convert(path))
         else:
             ext = path.split('.')[1]
             globPath = os.path.dirname(path)
             allPaths = glob.glob(f'{globPath}/*.{ext}')
-            with open(pdfPath, 'wb') as p :
+            with open(pdfPath, 'wb', encoding='utf-8') as p :
                 p.write(img2pdf.convert(allPaths))
         return pdfPath
 
@@ -118,7 +118,7 @@ def merge_pdfs_func(paths) -> str:
         for page in range(pdf_reader.getNumPages()):
             pdf_writer.addPage(pdf_reader.getPage(page))
 
-    with open(outPath, 'wb', encoding='utf-8-sig') as out:
+    with open(outPath, 'wb', encoding='utf-8') as out:
         pdf_writer.write(out)
 
     return outPath
