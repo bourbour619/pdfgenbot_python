@@ -1,7 +1,7 @@
 import glob
 import os
 from abc import ABC, abstractmethod
-from os import path
+from os import environ, path
 from time import sleep
 
 import docx2pdf
@@ -12,18 +12,20 @@ from PyPDF2 import PdfFileReader, PdfFileWriter
 
 
 class Activity :
-    id = ''
-    root = ''
+    id : str
+    root : str
+    step : int
     known = ['pdf', 'doc', 'docx', 'jpeg', 'jpg', 'png']
-    type = ''
-    current = ''
-    queue = []
+    type : str
+    current : str
+    queue : list
     def __init__(self) -> None:
         pass
 
     def init(self, id):
         self.id = id
         self.root = path.join(path.join(path.dirname(__file__),'files'), self.id)
+        self.step = 1
         if self.first() :
             self.env()
 
@@ -34,11 +36,14 @@ class Activity :
         os.mkdir(self.root)
 
     def log(self) -> list:
-        return os.listdir(self.root)
+        final = os.listdir().sort()
+        if final != self.queue.sort():
+            self.queue = final
+        return self.queue
 
     def add(self, name) -> str:
         t = path.join(self.root, name)
-        self.queue.append(t)
+        self.queue.append(name)
         self.current = self.queue[len(self.queue) - 1]
         return t
     
@@ -111,7 +116,7 @@ def merge_pdfs_func(paths) -> str:
         for page in range(pdf_reader.getNumPages()):
             pdf_writer.addPage(pdf_reader.getPage(page))
 
-    with open(outPath, 'wb') as out:
+    with open(outPath, 'wb', encoding='utf-8-sig') as out:
         pdf_writer.write(out)
 
     return outPath

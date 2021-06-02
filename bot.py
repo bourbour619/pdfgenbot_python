@@ -4,7 +4,7 @@ from telebot.types import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardMar
 from dotenv import load_dotenv
 import os 
 import time
-from classes import Activity, merge_pdfs_func
+from classes import Activity, ImageToPdf, WordToPdf, merge_pdfs_func
 import requests
 
 
@@ -22,6 +22,26 @@ bot = telebot.TeleBot(token=bot_token, parse_mode=None)
 
 
 
+def bot_markup_step(step: int):
+    markup = ReplyKeyboardMarkup(row_width=2)
+    if step == 1:    
+        markup.row(
+            KeyboardButton('تبدیل جدید'),
+            KeyboardButton('راهنمایی'),
+        )
+    if step > 1:
+        markup.row(
+            KeyboardButton('پی دی اف به بقیه'),
+            KeyboardButton('بقیه به پی دی اف'),
+        )
+        markup.row(
+            KeyboardButton('لیست فایلها'),
+            KeyboardButton('یکی کردن پی دی اف ها'),
+        )
+        markup.row(
+            KeyboardButton('مرحله قبلی')
+        )
+    return markup
 
 @bot.message_handler(commands=['start'])
 def start(msg):
@@ -29,17 +49,21 @@ def start(msg):
         activity.flush()
     cid = msg.chat.id
     user = msg.chat.username
-    markup = ReplyKeyboardMarkup(row_width=2)
-    markup.row(
-        KeyboardButton('پی دی اف به بقیه'),
-        KeyboardButton('بقیه به پی دی اف'),
-    )
-    markup.row(
-        KeyboardButton('لیست فایلها'),
-        KeyboardButton('یکی کردن پی دی اف ها')
-    )
-    bot.send_message(cid, 'چیکار میخوای کنی ؟ :)', reply_markup=markup )
+    markup = bot_markup_step(step=1)
+    activity.step += 1
+    bot.send_message(cid, reply_markup=markup )
     activity.init(id=user)
+
+@bot.message_handler(func= lambda msg: msg.text == 'کار جدید')
+def new_job(msg):
+    user = msg.chat.username
+    cid = msg.chat.id
+    if not activity.root:
+        activity.init(id=user)
+    markup = bot_markup_step(step=2)
+    activity.step += 1
+    bot.send_message(cid, 'میخوای چیکار کنی ؟ :)', reply_markup= markup)
+
 
 @bot.message_handler(func= lambda msg: msg.text == 'پی دی اف به بقیه')
 def from_pdf(msg):
@@ -66,6 +90,7 @@ def merge_pdfs(msg):
     if not activity.root:
         activity.init(id=user)
     activity.type = 'mergepdfs'
+    activity.step += 1
     bot.send_message(cid, 'فایل هاتو برام بفرست ... ')
 
 @bot.message_handler(func= lambda msg: msg.text == 'لیست فایلها')
@@ -81,18 +106,33 @@ def list_files(msg):
 @bot.message_handler(func= lambda msg: msg.text == 'مرحله قبلی')
 def prev_step(msg):
     cid = msg.chat.id
-    bot.send_message(cid, 'فایلتو برام بفرست ... ')
-    markup = ReplyKeyboardMarkup(row_width=2)
-    markup.row(
-        KeyboardButton('پی دی اف به بقیه'),
-        KeyboardButton('بقیه به پی دی اف'),
-    )
-    markup.row(
-        KeyboardButton('لیست فایلها'),
-        KeyboardButton('یکی کردن پی دی اف ها')
-    )
+    markup = bot_markup_step(step=activity.step)
+    activity.step -= 1
     bot.send_message(cid, 'چیکار میخوای کنی ؟ :)', reply_markup=markup )
 
+@bot.message_handler(func = lambda msg: msg.text == 'پی دی اف اش کن')
+def make_it_pdf(msg):
+    cid = msg.chat.id
+    files = activity.log()
+    exts = [f.split('.')[1] for f in files]
+    imageExts = ['jpg', 'jpeg', 'png']
+    docExts = ['doc', 'docx']
+    ext = exts[0]
+    cond = len(exts) > 1 and any(e != ext for e in exts) and ext in imageExts
+    if cond : 
+        bot.send_message(cid, 'فرمت عکسهایی که میخوای تبدیل کنی یکی نیست :)')
+    else:
+        converted = ''
+        if ext in imageExts:
+            itp = ImageToPdf()
+            converted = itp.convert(activity.current) if len(exts) == 1 else itp.convert(activity.current, no= len(exts))
+        if ext in docExts:
+            wtp = WordToPdf()
+            converted = wtp.convert(activity.current)
+        doc = open(converted, encoding='utf-8-sig')
+        bot.send_chat_action(cid, 'upload_document')
+        time.sleep(2)
+        bot.send_document(cid, doc)
 
 
 @bot.message_handler(content_types=['document', 'photo'])
@@ -179,12 +219,12 @@ def delfile(cid):
     bot.send_message(cid, 'فایلت حذف شد')
 
 def addfile(cid):
-    log = '\n'.join(activity.queue)
-    bot.send_message(cid, f'فعلا اینا رو فرستادی : \n {log} \n\t\t تعداد فایلها: {len(activity.queue)}')
+    log = '\n'.join(activity.log())
+    bot.send_message(cid, f'فعلا اینا رو فرستادی : \n {log} \n\t تعداد فایلها: {len(activity.log())}')
     bot.send_message(cid, 'فایل بعدی رو بفرست ...')
 
 def cvtopdf(cid):
-    src_exts = ['docx', 'doc', 'jpg']
+    src_exts = ['docx', 'doc', 'jpg', 'jpeg']
     ext = activity.current.split('.')[1]
     if ext not in src_exts:
         bot.send_message(cid, f'فرمت {ext} رو فعلا نمی تونم کاری کنم براش واسه همین حذفش کردم :)')
@@ -196,7 +236,6 @@ def cvtopdf(cid):
             KeyboardButton('مرحله قبلی')
         )
         bot.send_message(cid, 'اینجا رو چیکار کنم ؟ :)', reply_markup=markup)
-
 
 def cvfrompdf(cid):
         markup = ReplyKeyboardMarkup(row_width=2)
@@ -217,7 +256,7 @@ def mergepdf(cid):
         bot.send_message(cid, 'یه فایل دیگه باید اضافه کنی', reply_markup = markup)
     else:
         merged = merge_pdfs_func(activity.queue)
-        doc = open(merged, encoding='utf-8', errors='ignore')
+        doc = open(merged, encoding='utf-8-sig')
         bot.send_chat_action(cid, 'upload_document')
         time.sleep(2)
         bot.send_document(cid, doc)
