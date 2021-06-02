@@ -51,7 +51,7 @@ def start(msg):
     user = msg.chat.username
     markup = bot_markup_step(step=1)
     activity.step += 1
-    bot.send_message(cid, reply_markup=markup )
+    bot.send_message(cid, f'سلام {user}', reply_markup=markup )
     activity.init(id=user)
 
 @bot.message_handler(func= lambda msg: msg.text == 'کار جدید')
