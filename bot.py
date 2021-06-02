@@ -124,12 +124,13 @@ def make_it_pdf(msg):
         bot.send_message(cid, 'فرمت عکسهایی که میخوای تبدیل کنی یکی نیست :)')
     else:
         converted = ''
+        f = os.path.join(activity.root, activity.current)
         if ext in imageExts:
             itp = ImageToPdf()
-            converted = itp.convert(activity.current) if len(exts) == 1 else itp.convert(activity.current, no= len(exts))
+            converted = itp.convert(f) if len(exts) == 1 else itp.convert(f, no= len(exts))
         if ext in docExts:
             wtp = WordToPdf()
-            converted = wtp.convert(activity.current)
+            converted = wtp.convert(f)
         doc = open(converted, encoding='utf-8-sig')
         bot.send_chat_action(cid, 'upload_document')
         time.sleep(2)
@@ -234,6 +235,8 @@ def cvtopdf(cid):
         markup = ReplyKeyboardMarkup(row_width=2)
         markup.add(
             KeyboardButton('پی دی اف اش کن'),
+        )
+        markup.add(
             KeyboardButton('مرحله قبلی')
         )
         bot.send_message(cid, 'اینجا رو چیکار کنم ؟ :)', reply_markup=markup)
