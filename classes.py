@@ -105,11 +105,13 @@ class ImageToPdf(ConvertStrategy):
 
 class PdfToImage(ConvertStrategy):
     
-    def covnert(self, path, no = 1):
+    def covnert(self, path, no = 1) -> list:
         imagePath = os.path.dirname(path)
         images = pdf2image.convert_from_path(path)
         for i in range(len(images)):
             images[i].save(f'{imagePath}/{str(i)}.jpg', 'JPEG')
+        
+        return glob.glob(f'{imagePath}/*.jpg')
 
 
 def merge_pdfs_func(paths) -> str:
