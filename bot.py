@@ -147,6 +147,7 @@ def make_it_image(msg):
     f = path.join(ac.root, ac.current)
     pti = PdfToImage()
     images = pti.convert(f)
+    images = images.split('-')
     if images:
         bot.send_chat_action(cid, 'upload_document')
         time.sleep(2)
