@@ -12,20 +12,19 @@ from PyPDF2 import PdfFileReader, PdfFileWriter
 
 
 class Activity :
-    id : str
-    root : str
-    step : int
+    id = ''
+    root = ''
+    step = 0
     known = ['pdf', 'doc', 'docx', 'jpeg', 'jpg', 'png']
-    type : str
-    current : str
-    queue : list
+    type = ''
+    current = ''
+    queue = []
     def __init__(self) -> None:
         pass
 
     def init(self, id):
         self.id = id
         self.root = path.join(path.join(path.dirname(__file__),'files'), self.id)
-        self.step = 1
         if self.first() :
             self.env()
 
