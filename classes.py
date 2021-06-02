@@ -121,7 +121,7 @@ def merge_pdfs_func(paths) -> str:
         for page in range(pdf_reader.getNumPages()):
             pdf_writer.addPage(pdf_reader.getPage(page))
 
-    with open(outPath, 'wb', encoding='utf-8') as out:
+    with open(outPath, 'wb') as out:
         pdf_writer.write(out)
 
     return outPath
