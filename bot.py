@@ -265,7 +265,8 @@ def mergepdf(cid):
         )
         bot.send_message(cid, 'یه فایل دیگه باید اضافه کنی', reply_markup = markup)
     else:
-        merged = merge_pdfs_func(activity.queue)
+        qf = [os.path.join(activity.root, q) for q in activity.queue ]
+        merged = merge_pdfs_func(qf)
         doc = open(merged, 'rb')
         bot.send_chat_action(cid, 'upload_document')
         time.sleep(2)
