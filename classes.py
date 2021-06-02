@@ -25,7 +25,7 @@ class Activity :
     def init(self, id):
         self.id = id
         self.root = path.join(path.join(path.dirname(__file__),'files'), self.id)
-        self.step += 1
+        self.step = 1
         if self.first() :
             self.env()
 

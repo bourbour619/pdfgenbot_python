@@ -61,8 +61,8 @@ def new_job(msg):
     cid = msg.chat.id
     if not activity.root:
         activity.init(id=user)
-    markup = bot_markup_step(step=activity.step)
     activity.step += 1
+    markup = bot_markup_step(step=activity.step)
     bot.send_message(cid, 'میخوای چیکار کنی ؟ :)', reply_markup= markup)
 
 
